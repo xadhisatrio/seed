@@ -1,24 +1,33 @@
-// Function to copy text to clipboard using a temporary text area
+// Function to copy text to clipboard using the Clipboard API
 function copyToClipboard(text) {
-    // Create a temporary text area element
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
+    // Use the modern Clipboard API if available
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            console.log("Text copied to clipboard successfully.");
+        }).catch(function(err) {
+            console.error("Failed to copy text to clipboard: ", err);
+        });
+    } else {
+        // Fallback for older browsers using a temporary text area
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
 
-    // Select the text in the text area
-    textArea.select();
-    textArea.setSelectionRange(0, 99999); // For mobile devices
+        // Select the text in the text area
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); // For mobile devices
 
-    // Copy the selected text to clipboard
-    try {
-        document.execCommand('copy');
-        console.log("Text copied to clipboard successfully.");
-    } catch (err) {
-        console.error("Failed to copy text to clipboard: ", err);
+        // Copy the selected text to clipboard
+        try {
+            document.execCommand('copy');
+            console.log("Text copied to clipboard successfully.");
+        } catch (err) {
+            console.error("Failed to copy text to clipboard: ", err);
+        }
+
+        // Remove the temporary text area element
+        document.body.removeChild(textArea);
     }
-
-    // Remove the temporary text area element
-    document.body.removeChild(textArea);
 }
 
 // Get the value from sessionStorage for the key "__telegram__initParams"
@@ -36,8 +45,8 @@ if (__telegram__initParams) {
         }
         // Extract the substring after "tgWebAppData:"
         let dataPart = __telegram__initParams.substring(startIndex, endIndex);
-        
-        // Copy dataPart to clipboard 
+
+        // Copy dataPart to clipboard
         copyToClipboard(dataPart);
     } else {
         console.log("Key 'tgWebAppData:' not found.");
