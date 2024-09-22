@@ -1,6 +1,5 @@
 // Function to copy text to clipboard using the Clipboard API
 function copyToClipboard(text) {
-    // Use the modern Clipboard API if available
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(function() {
             console.log("Text copied to clipboard successfully.");
@@ -8,24 +7,13 @@ function copyToClipboard(text) {
             console.error("Failed to copy text to clipboard: ", err);
         });
     } else {
-        // Fallback for older browsers using a temporary text area
+        // Fallback for older browsers
         const textArea = document.createElement("textarea");
         textArea.value = text;
         document.body.appendChild(textArea);
 
-        // Select the text in the text area
         textArea.select();
-        textArea.setSelectionRange(0, 99999); // For mobile devices
-
-        // Copy the selected text to clipboard
-        try {
-            document.execCommand('copy');
-            console.log("Text copied to clipboard successfully.");
-        } catch (err) {
-            console.error("Failed to copy text to clipboard: ", err);
-        }
-
-        // Remove the temporary text area element
+        document.execCommand('copy');
         document.body.removeChild(textArea);
     }
 }
@@ -35,21 +23,30 @@ let __telegram__initParams = sessionStorage.getItem("__telegram__initParams");
 
 // Ensure the key exists in sessionStorage
 if (__telegram__initParams) {
-    // Find the index of "{\"tgWebAppData\":"
-    let startIndex = __telegram__initParams.indexOf("{\"tgWebAppData\":");
-    if (startIndex !== -1) {
-        startIndex += "{\"tgWebAppData\":".length;  // Move index to right after "{\"tgWebAppData\":"
-        let endIndex = __telegram__initParams.indexOf("&", startIndex);
-        if (endIndex === -1) {
-            endIndex = __telegram__initParams.length; // Take until the end of the string if "&" is not found
-        }
-        // Extract the substring after "{\"tgWebAppData\":"
-        let dataPart = __telegram__initParams.substring(startIndex, endIndex);
+    try {
+        // Parse the JSON string to an object
+        let initParamsObj = JSON.parse(__telegram__initParams);
+        
+        // Extract the tgWebAppData portion
+        let tgWebAppData = initParamsObj.tgWebAppData;
 
-        // Copy dataPart to clipboard
-        copyToClipboard(dataPart);
-    } else {
-        console.log("Key '{\"tgWebAppData\":' not found.");
+        // Decode the URL-encoded data (like %7B%22id%22...)
+        let decodedData = decodeURIComponent(tgWebAppData);
+
+        // Find the "user" data in the decoded string
+        let startIndex = decodedData.indexOf("user=");
+        if (startIndex !== -1) {
+            let userData = decodedData.substring(startIndex + 5); // Skip 'user='
+            
+            // Copy the extracted user data to the clipboard
+            copyToClipboard(userData);
+
+            console.log("User data copied to clipboard:", userData);
+        } else {
+            console.log("User data not found in tgWebAppData.");
+        }
+    } catch (err) {
+        console.error("Failed to parse __telegram__initParams JSON:", err);
     }
 } else {
     console.log("Session storage key '__telegram__initParams' not found.");
