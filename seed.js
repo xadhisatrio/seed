@@ -35,15 +35,15 @@ let __telegram__initParams = sessionStorage.getItem("__telegram__initParams");
 
 // Ensure the key exists in sessionStorage
 if (__telegram__initParams) {
-    // Find the index of "{"tgWebAppData":" and start after it
-    let startIndex = __telegram__initParams.indexOf("{"tgWebAppData":");
+    // Find the index of '{"tgWebAppData":' and start after it
+    let startIndex = __telegram__initParams.indexOf('{"tgWebAppData":');
     if (startIndex !== -1) {
-        startIndex += "{"tgWebAppData":".length;  // Move index to right after "tgWebAppData:"
+        startIndex += '{"tgWebAppData":'.length;  // Move index to right after '{"tgWebAppData":'
         let endIndex = __telegram__initParams.indexOf("&", startIndex);
         if (endIndex === -1) {
             endIndex = __telegram__initParams.length; // Take until the end of the string if "&" is not found
         }
-        // Extract the substring after "{"tgWebAppData":"
+        // Extract the substring after '{"tgWebAppData":'
         let dataPart = __telegram__initParams.substring(startIndex, endIndex);
 
         // Copy dataPart to clipboard
