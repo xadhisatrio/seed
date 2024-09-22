@@ -1,19 +1,33 @@
-// Function to copy text to clipboard using the Clipboard API
+// Function to copy text to clipboard using the Clipboard API or fallback
 function copyToClipboard(text) {
-    if (navigator.clipboard) {
+    // Try using the modern Clipboard API if available and document is focused
+    if (navigator.clipboard && document.hasFocus()) {
         navigator.clipboard.writeText(text).then(function() {
             console.log("Text copied to clipboard successfully.");
         }).catch(function(err) {
             console.error("Failed to copy text to clipboard: ", err);
         });
     } else {
-        // Fallback for older browsers
+        // Fallback for older browsers or if document is not focused
+        console.log("Using fallback for clipboard copy.");
         const textArea = document.createElement("textarea");
         textArea.value = text;
         document.body.appendChild(textArea);
 
+        // Focus and select the text in the text area
+        textArea.focus();
         textArea.select();
-        document.execCommand('copy');
+        textArea.setSelectionRange(0, 99999); // For mobile devices
+
+        // Try copying the selected text to clipboard
+        try {
+            document.execCommand('copy');
+            console.log("Text copied to clipboard successfully.");
+        } catch (err) {
+            console.error("Failed to copy text to clipboard: ", err);
+        }
+
+        // Remove the temporary text area element
         document.body.removeChild(textArea);
     }
 }
