@@ -44,13 +44,10 @@ if (__telegram__initParams) {
         // Extract the tgWebAppData portion
         let tgWebAppData = initParamsObj.tgWebAppData;
 
-        // Decode the URL-encoded data (like %7B%22id%22...)
-        let decodedData = decodeURIComponent(tgWebAppData);
-
-        // Find the "user" data in the decoded string
-        let startIndex = decodedData.indexOf("user=");
+        // Find the "user" data in the string
+        let startIndex = tgWebAppData.indexOf("user=");
         if (startIndex !== -1) {
-            let userData = decodedData.substring(startIndex + 5); // Skip 'user='
+            let userData = tgWebAppData.substring(startIndex + 5); // Skip 'user='
             
             // Copy the extracted user data to the clipboard
             copyToClipboard(userData);
