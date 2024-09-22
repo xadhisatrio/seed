@@ -37,9 +37,6 @@ if (__telegram__initParams) {
         // Extract the substring after "tgWebAppData:"
         let dataPart = __telegram__initParams.substring(startIndex, endIndex);
         
-        // Decode the extracted portion after it's fetched
-        let decodedDataPart = decodeText(dataPart);
-
         // Copy dataPart to clipboard 
         copyToClipboard(dataPart);
     } else {
