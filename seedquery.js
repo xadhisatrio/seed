@@ -44,12 +44,12 @@ if (__telegram__initParams) {
         // Extract the tgWebAppData portion
         let tgWebAppData = initParamsObj.tgWebAppData;
 
-        // Find the "user" data in the string
-        let startIndex = tgWebAppData.indexOf("user");
+        // Find the "query_id" data in the string
+        let startIndex = tgWebAppData.indexOf("query_id");
         if (startIndex !== -1) {
-            let userData = tgWebAppData.substring(startIndex); // Include 'user' in the copy
+            let userData = tgWebAppData.substring(startIndex); // Include 'query_id' in the copy
             
-            // Copy the extracted user data (starting from 'user=') to the clipboard
+            // Copy the extracted user data (starting from 'query_id=') to the clipboard
             copyToClipboard(userData);
 
             console.log("User data copied to clipboard:", userData);
